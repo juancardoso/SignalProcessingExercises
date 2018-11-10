@@ -17,7 +17,7 @@ import cmath
 import matplotlib.pyplot as plt
 
 
-Fs = 128.0
+Fs = 2048
 Ts = 1.0/Fs
 t = np.arange(0,1,Ts)
 pi2 = cmath.pi * 2.0
@@ -25,11 +25,7 @@ pi2 = cmath.pi * 2.0
 def loadList(N,f):
     a = float(random.randint(1, 100))
     fnList = []
-    for n in range(N):
-        t = float(n) / N * pi2
-        fn = a * math.sin(f * t + float(random.randint(0, 360) / 360 * pi2))
-        fnList.append(fn)
-    return fnList
+    return np.sin(pi2 * f * np.arange(0, 1, Ts))
 
 def DFT(fnList):
     N = len(fnList)
@@ -66,20 +62,20 @@ def plot(x, fnList):
     ax[0].plot(t,x)
     ax[0].set_xlabel('Time')
     ax[0].set_ylabel('Amplitude')
-    ax[1].plot(frq,abs(Y),'r') # plotting the spectrum
+    ax[1].plot([x for x in range(int(Fs / 2))], abs(Y),'r') # plotting the spectrum
     ax[1].set_xlabel('Freq (Hz)')
     ax[1].set_ylabel('|Y(freq)|')
     plt.show()
 
 def main(option):
     if option == 'DFT':
-        DFT()
+        print(DFT(loadList(128, 30)))
     elif option == 'FFT':
-        FFT() 
+        print(FFT(loadList(128, 30)) )
     elif option == 'TRANSFORMADA':
         n = int(sys.argv[2])
         f = int(sys.argv[3])
-        lst = loadList(n, Fs)
+        lst = loadList(n, f)
         fft = FFT(lst)
         print(fft)
         plot(lst, fft)
