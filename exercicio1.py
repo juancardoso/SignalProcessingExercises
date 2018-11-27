@@ -15,9 +15,13 @@ import math
 import random
 import cmath
 import matplotlib.pyplot as plt
+import time
 
 
-Fs = 2048
+Fs = 1024
+RATE = 44100
+ms = 0.2
+N = 2 ** math.ceil(math.log(RATE * ms)/math.log(2))
 Ts = 1.0/Fs
 t = np.arange(0,1,Ts)
 pi2 = cmath.pi * 2.0
@@ -37,6 +41,17 @@ def DFT(fnList):
         FmList.append(Fm / N)
     return FmList
 
+def Exercicio2(n):
+    f1 = 30
+    f2 = 50
+    f3 = 60
+    l1 = loadList(n, f1)
+    l2 = loadList(n, f2)
+    l3 = loadList(n, f3)
+    l = np.add(np.add(l1, l2), l3)
+    x = FFT(l)
+    plot(l, x)
+
 def FFT(x):
     """A recursive implementation of the 1D Cooley-Tukey FFT"""
     x = np.asarray(x, dtype=float)
@@ -54,15 +69,14 @@ def FFT(x):
                                X_even + factor[int(N / 2):] * X_odd])
 
 def plot(x, fnList):
-    fn = lambda x : math.sqrt(math.pow(x[0], 2) + math.pow(x[1], 2))
-    X = fn(fnList)
+    X = x
     Y = fnList[range(int(len(fnList)/2))]
 
     fig, ax = plt.subplots(2, 1)
     ax[0].plot(t,x)
     ax[0].set_xlabel('Time')
     ax[0].set_ylabel('Amplitude')
-    ax[1].plot([x for x in range(int(Fs / 2))], abs(Y),'r') # plotting the spectrum
+    ax[1].plot([x for x in range(int(Fs / 2))], [np.sqrt(c.real**2+c.imag**2) for c in Y],'r') # plotting the spectrum
     ax[1].set_xlabel('Freq (Hz)')
     ax[1].set_ylabel('|Y(freq)|')
     plt.show()
@@ -79,6 +93,8 @@ def main(option):
         fft = FFT(lst)
         print(fft)
         plot(lst, fft)
+    elif option == 'EX2':
+        Exercicio2(int(sys.argv[2]));
 
 if __name__ == '__main__':
 
